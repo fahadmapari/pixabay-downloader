@@ -231,7 +231,7 @@ btnDownload.addEventListener("click", async () => {
 
     await chrome.downloads.download({
       url:      blobUrl,
-      filename: `Pixabay/${filename}`,  // saves into a Pixabay sub-folder
+      filename: filename,
       saveAs:   false,
     });
 
