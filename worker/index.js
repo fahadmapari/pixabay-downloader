@@ -99,8 +99,10 @@ export default {
       return json({ error: `Failed to fetch image from CDN: ${err.message}` }, 502);
     }
 
-    // ── Step 4: Use Pixabay's original filename from the CDN URL ────────────
-    const filename = imageUrl.split("?")[0].split("/").pop() || `pixabay-${imageId}.jpg`;
+    // ── Step 4: Use Pixabay's original filename ──────────────────────────────
+    // imgRes.url is the final URL after redirects (e.g. cdn.pixabay.com/photo/.../name-id_1280.jpg)
+    const cdnFilename = (imgRes.url || imageUrl).split("?")[0].split("/").pop();
+    const filename = cdnFilename || `pixabay-${imageId}.jpg`;
 
     // ── Step 5: Stream image back to extension ───────────────────────────────
     return new Response(imgRes.body, {
