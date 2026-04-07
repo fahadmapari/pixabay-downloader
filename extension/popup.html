@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pixabay Downloader</title>
+    <title>PixaDown</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@300;400;500;600&display=swap"
@@ -73,11 +73,20 @@
         font-weight: 600;
         letter-spacing: -0.02em;
         color: var(--text);
+        line-height: 1.2;
       }
 
       .logo-name span {
         color: var(--muted);
         font-weight: 400;
+      }
+
+      .logo-byline {
+        font-size: 10px;
+        font-weight: 400;
+        color: var(--muted);
+        letter-spacing: 0;
+        margin-top: 1px;
       }
 
       .header-right {
@@ -398,7 +407,10 @@
             <rect x="7" y="7" width="4" height="4" fill="#0a0a0a" />
           </svg>
         </div>
-        <span class="logo-name">pixget<span>/dl</span></span>
+        <div>
+          <div class="logo-name">PixaDown</div>
+          <div class="logo-byline">by Fahad Mapari</div>
+        </div>
       </div>
       <div class="header-right">
         <span class="version-badge">v1.0</span>

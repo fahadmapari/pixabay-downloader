@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Pixabay Downloader",
+  "name": "PixaDown",
   "version": "1.0.0",
   "description": "Download full-res Pixabay images via a Cloudflare proxy — bypasses shared IP rate limits.",
   "permissions": [
