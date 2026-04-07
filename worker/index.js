@@ -68,7 +68,7 @@ export default {
       }
 
       const hit = data.hits[0];
-      imageUrl   = hit.webformatURL;   // up to 1920px, free tier
+      imageUrl   = hit.largeImageURL || hit.webformatURL;  // large preferred, medium fallback
       previewUrl = hit.previewURL;     // small thumbnail
       tags       = hit.tags || "";
     } catch (err) {
