@@ -2,6 +2,10 @@
    popup.js — Pixabay Downloader Chrome Extension
    ───────────────────────────────────────────────────────────────────────────── */
 
+// ── Config ────────────────────────────────────────────────────────────────────
+
+const WORKER_URL = "https://pixabay-proxy.fahadmapari09.workers.dev";
+
 // ── DOM refs ─────────────────────────────────────────────────────────────────
 
 const $ = (id) => document.getElementById(id);
@@ -24,9 +28,6 @@ const btnDownload   = $("btnDownload");
 const btnSpinner    = $("btnSpinner");
 const btnIcon       = $("btnIcon");
 const btnLabel      = $("btnLabel");
-
-const workerUrlInput = $("workerUrlInput");
-const btnSave        = $("btnSave");
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
@@ -123,18 +124,8 @@ async function loadPreviewForId(imageId) {
   setStatus(`Detected ID ${imageId} — loading preview…`);
   setDot("busy");
 
-  const workerUrl = (await chrome.storage.local.get(["workerUrl"])).workerUrl?.trim();
-
-  if (!workerUrl) {
-    // No worker configured yet — still show the ID so user can download once they set it
-    showPreview(imageId, null, "Set Worker URL to load preview");
-    setStatus("Set your Worker URL in settings below", "dim");
-    setDot("idle");
-    return;
-  }
-
   try {
-    const res = await fetch(workerUrl, {
+    const res = await fetch(WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ imageId, previewOnly: true }),
@@ -176,14 +167,7 @@ function processUrl(url) {
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // Restore saved worker URL
-  const stored = await chrome.storage.local.get(["workerUrl"]);
-  if (stored.workerUrl) {
-    workerUrlInput.value = stored.workerUrl;
-  }
-
-  // Auto-load from the current tab
+document.addEventListener("DOMContentLoaded", () => {
   loadFromCurrentTab();
 });
 
@@ -212,19 +196,6 @@ urlInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") processUrl(urlInput.value);
 });
 
-// ── Save worker URL ────────────────────────────────────────────────────────────
-
-btnSave.addEventListener("click", async () => {
-  const url = workerUrlInput.value.trim();
-  if (!url) return;
-  await chrome.storage.local.set({ workerUrl: url });
-  setStatus("Worker URL saved ✓", "ok");
-  setTimeout(() => setStatus("Ready", "dim"), 2500);
-
-  // Re-trigger preview now that worker is set
-  if (currentImageId) loadPreviewForId(currentImageId);
-});
-
 // ── Download ───────────────────────────────────────────────────────────────────
 
 btnDownload.addEventListener("click", async () => {
@@ -233,20 +204,11 @@ btnDownload.addEventListener("click", async () => {
     return;
   }
 
-  const stored    = await chrome.storage.local.get(["workerUrl"]);
-  const workerUrl = stored.workerUrl?.trim();
-
-  if (!workerUrl) {
-    setStatus("Paste your Worker URL in settings below", "err");
-    setDot("error");
-    return;
-  }
-
   setDownloadLoading(true);
   setStatus("Sending to proxy worker…");
 
   try {
-    const res = await fetch(workerUrl, {
+    const res = await fetch(WORKER_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ imageId: currentImageId }),

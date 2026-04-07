@@ -384,68 +384,6 @@
         color: var(--muted);
       }
 
-      /* ─── Settings ───────────────────────────────────── */
-      .settings {
-        border-top: 1px solid var(--border);
-        padding: 10px 16px 14px;
-      }
-
-      .settings-head {
-        font-size: 10px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--muted);
-        margin-bottom: 7px;
-      }
-
-      .settings-row {
-        display: flex;
-        gap: 6px;
-      }
-
-      .worker-input {
-        flex: 1;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        color: var(--text-dim);
-        font-family: "Geist Mono", monospace;
-        font-size: 10px;
-        padding: 6px 9px;
-        outline: none;
-        transition:
-          border-color 0.15s,
-          color 0.15s;
-        min-width: 0;
-      }
-
-      .worker-input:focus {
-        border-color: var(--border-hi);
-        color: var(--text);
-      }
-      .worker-input::placeholder {
-        color: var(--muted);
-      }
-
-      .btn-save {
-        background: transparent;
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        color: var(--muted);
-        font-size: 10px;
-        font-family: "Geist", sans-serif;
-        padding: 5px 11px;
-        cursor: pointer;
-        white-space: nowrap;
-        transition:
-          border-color 0.15s,
-          color 0.15s;
-      }
-
-      .btn-save:hover {
-        border-color: var(--border-hi);
-        color: var(--text);
-      }
     </style>
   </head>
   <body>
@@ -549,21 +487,6 @@
       <span class="status-text dim" id="statusText"
         >Waiting for a Pixabay URL</span
       >
-    </div>
-
-    <!-- ── Settings ── -->
-    <div class="settings">
-      <div class="settings-head">Worker URL</div>
-      <div class="settings-row">
-        <input
-          class="worker-input"
-          id="workerUrlInput"
-          type="text"
-          value="https://pixabay-proxy.fahadmapari09.workers.dev"
-          placeholder="https://pixabay-proxy.fahadmapari09.workers.dev"
-        />
-        <button class="btn-save" id="btnSave">Save</button>
-      </div>
     </div>
 
     <script src="popup.js"></script>
