@@ -68,7 +68,9 @@ export default {
       }
 
       const hit = data.hits[0];
-      imageUrl   = hit.largeImageURL || hit.webformatURL;  // large preferred, medium fallback
+      // If webformat is already 1440px or wider, it's sufficient — skip largeImageURL
+      const webformatIsLarge = (hit.webformatWidth || 0) >= 1440 || (hit.webformatHeight || 0) >= 1440;
+      imageUrl   = webformatIsLarge ? hit.webformatURL : (hit.largeImageURL || hit.webformatURL);
       previewUrl = hit.previewURL;     // small thumbnail
       tags       = hit.tags || "";
     } catch (err) {
