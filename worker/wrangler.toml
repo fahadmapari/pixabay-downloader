@@ -1,0 +1,13 @@
+name = "pixabay-proxy"
+main = "index.js"
+compatibility_date = "2024-09-23"
+
+# Deploy with:
+#   wrangler deploy
+#
+# Set your Pixabay API key as a secret (never commit it):
+#   wrangler secret put PIXABAY_KEY
+#
+# Your worker will be live at:
+#   https://pixabay-proxy.<your-subdomain>.workers.dev
+#   https://pixabay-proxy.fahadmapari09.workers.dev
