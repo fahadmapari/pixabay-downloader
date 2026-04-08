@@ -53,8 +53,7 @@ export default {
     let imageUrl, tags, previewUrl;
     try {
       const apiRes = await fetch(
-        `https://pixabay.com/api/?key=${env.PIXABAY_KEY}&id=${imageId}&per_page=3`,
-        { headers: { "User-Agent": "PixabayProxy/1.0" } }
+        `https://pixabay.com/api/?key=${env.PIXABAY_KEY}&id=${imageId}&per_page=3`
       );
 
       if (!apiRes.ok) {
@@ -83,54 +82,15 @@ export default {
     }
 
     // ── Step 3: Fetch full image from CDN via Cloudflare IP ──────────────────
-    // Rotate through realistic Chrome UA strings to reduce fingerprinting
-    const USER_AGENTS = [
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.122 Safari/537.36",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
-    ];
-    const ua = USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
-
-    // Build a plausible Pixabay image page URL as the referer
-    const referer = `https://pixabay.com/photos/${imageId}/`;
-
     let imgRes;
     try {
-      imgRes = await fetch(imageUrl, {
-        headers: {
-          "User-Agent": ua,
-          "Referer": referer,
-          "Origin": "https://pixabay.com",
-          "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-          "Accept-Language": "en-US,en;q=0.9",
-          "Accept-Encoding": "gzip, deflate, br",
-          "Connection": "keep-alive",
-          "Sec-Fetch-Dest": "image",
-          "Sec-Fetch-Mode": "no-cors",
-          "Sec-Fetch-Site": "cross-site",
-          "Cache-Control": "no-cache",
-          "Pragma": "no-cache",
-        },
-      });
+      imgRes = await fetch(imageUrl);
 
       if (!imgRes.ok) {
         // On 429, fall back to webformatURL if we were trying largeImageURL
         if (imgRes.status === 429 && imageUrl.includes("_1280")) {
           const fallbackUrl = imageUrl.replace(/_1280(\.\w+)$/, "_640$1");
-          imgRes = await fetch(fallbackUrl, {
-            headers: {
-              "User-Agent": ua,
-              "Referer": referer,
-              "Origin": "https://pixabay.com",
-              "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-              "Accept-Language": "en-US,en;q=0.9",
-              "Sec-Fetch-Dest": "image",
-              "Sec-Fetch-Mode": "no-cors",
-              "Sec-Fetch-Site": "cross-site",
-            },
-          });
+          imgRes = await fetch(fallbackUrl);
         }
 
         if (!imgRes.ok) {
