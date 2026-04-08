@@ -4,7 +4,16 @@
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
-const WORKER_URL = "https://pixabay-proxy.fahadmapari09.workers.dev";
+const WORKER_URLS = [
+  "https://pixabay-proxy.fahadmapari09.workers.dev",
+  "REPLACE_WITH_SECOND_WORKER_URL",
+];
+let workerIndex = 0;
+function getWorkerUrl() {
+  const url = WORKER_URLS[workerIndex];
+  workerIndex = (workerIndex + 1) % WORKER_URLS.length;
+  return url;
+}
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
 
@@ -125,7 +134,7 @@ async function loadPreviewForId(imageId) {
   setDot("busy");
 
   try {
-    const res = await fetch(WORKER_URL, {
+    const res = await fetch(getWorkerUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ imageId, previewOnly: true }),
@@ -208,7 +217,7 @@ btnDownload.addEventListener("click", async () => {
   setStatus("Sending to proxy worker…");
 
   try {
-    const res = await fetch(WORKER_URL, {
+    const res = await fetch(getWorkerUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ imageId: currentImageId }),

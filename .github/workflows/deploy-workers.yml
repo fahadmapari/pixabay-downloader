@@ -1,0 +1,28 @@
+name: Deploy Workers
+
+on:
+  push:
+    branches: [master]
+    paths: [worker/**]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: account-1
+            api_token_secret: CF_API_TOKEN_1
+            account_id_secret: CF_ACCOUNT_ID_1
+          - name: account-2
+            api_token_secret: CF_API_TOKEN_2
+            account_id_secret: CF_ACCOUNT_ID_2
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to ${{ matrix.name }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets[matrix.api_token_secret] }}
+          accountId: ${{ secrets[matrix.account_id_secret] }}
+          workingDirectory: worker
