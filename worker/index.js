@@ -90,9 +90,9 @@ export default {
 
         if (imgRes.status !== 429) break;
 
-        // On last retry for largeImageURL, fall back to smaller webformat
+        // On last retry for largeImageURL, fall back to medium (1280 → 960)
         if (attempt === MAX_RETRIES && imageUrl.includes("_1280")) {
-          const fallbackUrl = imageUrl.replace(/_1280(\.\w+)$/, "_640$1");
+          const fallbackUrl = imageUrl.replace(/_1280(\.\w+)$/, "_960$1");
           imgRes = await fetch(fallbackUrl);
           break;
         }
