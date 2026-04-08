@@ -81,21 +81,30 @@ export default {
       return json({ previewUrl, tags, imageId });
     }
 
-    // ── Step 3: Fetch full image from CDN via Cloudflare IP ──────────────────
+    // ── Step 3: Fetch full image from CDN with retry on 429 ───────────────────
+    const MAX_RETRIES = 4;
     let imgRes;
     try {
-      imgRes = await fetch(imageUrl);
+      for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+        imgRes = await fetch(imageUrl);
 
-      if (!imgRes.ok) {
-        // On 429, fall back to webformatURL if we were trying largeImageURL
-        if (imgRes.status === 429 && imageUrl.includes("_1280")) {
+        if (imgRes.status !== 429) break;
+
+        // On last retry for largeImageURL, fall back to smaller webformat
+        if (attempt === MAX_RETRIES && imageUrl.includes("_1280")) {
           const fallbackUrl = imageUrl.replace(/_1280(\.\w+)$/, "_640$1");
           imgRes = await fetch(fallbackUrl);
+          break;
         }
 
-        if (!imgRes.ok) {
-          return json({ error: `CDN fetch failed with status ${imgRes.status}.` }, 502);
+        // Wait before retrying: 500ms, 1s, 1.5s, 2s
+        if (attempt < MAX_RETRIES) {
+          await new Promise((r) => setTimeout(r, (attempt + 1) * 500));
         }
+      }
+
+      if (!imgRes.ok) {
+        return json({ error: `CDN fetch failed with status ${imgRes.status}.` }, 502);
       }
     } catch (err) {
       return json({ error: `Failed to fetch image from CDN: ${err.message}` }, 502);
